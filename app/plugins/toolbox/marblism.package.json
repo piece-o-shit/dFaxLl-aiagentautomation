@@ -1,0 +1,13 @@
+{
+  "name": "toolbox",
+  "version": "1.0.3",
+  "description": "A set of useful typescript functions for any application.",
+  "dependencies": ["decompress", "archiver", "fs-extra", "cookie"],
+  "devDependencies": [
+    "@types/fs-extra",
+    "@types/archiver",
+    "@types/decompress"
+  ],
+  "pluginDependencies": [],
+  "keywords": []
+}

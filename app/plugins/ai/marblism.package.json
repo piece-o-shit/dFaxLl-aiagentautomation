@@ -1,0 +1,13 @@
+{
+  "name": "ai-v2",
+  "version": "1.0.6",
+  "description": "Integrates with OpenAI/Gemini/Anthropic to provide various AI-driven functionalities",
+  "targetPath": "/app/plugins/ai",
+  "dependencies": [
+    "openai",
+    "@google/generative-ai",
+    "gemini-zod",
+    "@anthropic-ai/sdk"
+  ],
+  "keywords": ["ai", "openai", "gemini", "anthropic", "claude"]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "document-processor",
+  "version": "1.0.1",
+  "description": "Makes it easy to parse PDFs, DOCx, Excel or CSV file and generate PDF from HTML",
+  "dependencies": ["cheerio", "mammoth", "papaparse", "pdf-parse"]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "cron",
+  "version": "1.0.1",
+  "description": "Cron jobs for your app",
+  "dependencies": ["node-cron"],
+  "devDependencies": ["@types/node-cron"]
+}

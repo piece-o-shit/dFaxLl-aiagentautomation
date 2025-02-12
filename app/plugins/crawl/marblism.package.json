@@ -1,0 +1,6 @@
+{
+  "name": "crawl",
+  "version": "1.0.0",
+  "description": "Integrates with FireCrawl to make it easy to scrape an URL and return its content",
+  "dependencies": ["@mendable/firecrawl-js"]
+}

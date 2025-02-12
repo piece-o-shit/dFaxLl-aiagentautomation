@@ -1,0 +1,6 @@
+{
+  "name": "socket",
+  "version": "1.0.3",
+  "description": "Integrates with Socket.io to provide real-time communication functionalities",
+  "dependencies": ["socket.io", "socket.io-client"]
+}
