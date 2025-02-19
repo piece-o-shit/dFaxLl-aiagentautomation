@@ -21,7 +21,6 @@ export const Logo: React.FC<Props> = ({
   return (
     <Flex align="center" gap={10} onClick={() => goTo('/home')}>
       <img
-        src="https://marblism-dashboard-api--production-public.s3.us-west-1.amazonaws.com/dFaxLl-aiagentautomation-NMrK"
         {...props}
         alt="Logo"
         height={height}
