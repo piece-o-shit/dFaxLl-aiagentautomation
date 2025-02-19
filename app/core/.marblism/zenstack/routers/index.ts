@@ -10,6 +10,9 @@ import createWorkflowAgentRouter from "./WorkflowAgent.router";
 import createExecutionRouter from "./Execution.router";
 import createNotificationRouter from "./Notification.router";
 import createSettingRouter from "./Setting.router";
+import createChatParticipantRouter from "./ChatParticipant.router";
+import createChatConversationRouter from "./ChatConversation.router";
+import createChatMessageRouter from "./ChatMessage.router";
 import { ClientType as UserClientType } from "./User.router";
 import { ClientType as DocumentationClientType } from "./Documentation.router";
 import { ClientType as AgentClientType } from "./Agent.router";
@@ -19,6 +22,9 @@ import { ClientType as WorkflowAgentClientType } from "./WorkflowAgent.router";
 import { ClientType as ExecutionClientType } from "./Execution.router";
 import { ClientType as NotificationClientType } from "./Notification.router";
 import { ClientType as SettingClientType } from "./Setting.router";
+import { ClientType as ChatParticipantClientType } from "./ChatParticipant.router";
+import { ClientType as ChatConversationClientType } from "./ChatConversation.router";
+import { ClientType as ChatMessageClientType } from "./ChatMessage.router";
 
 export type BaseConfig = AnyRootConfig;
 
@@ -52,6 +58,9 @@ export function createRouter<Config extends BaseConfig>(router: RouterFactory<Co
         execution: createExecutionRouter(router, procedure),
         notification: createNotificationRouter(router, procedure),
         setting: createSettingRouter(router, procedure),
+        chatParticipant: createChatParticipantRouter(router, procedure),
+        chatConversation: createChatConversationRouter(router, procedure),
+        chatMessage: createChatMessageRouter(router, procedure),
     }
     );
 }
@@ -66,4 +75,7 @@ export interface ClientType<AppRouter extends AnyRouter> {
     execution: ExecutionClientType<AppRouter>;
     notification: NotificationClientType<AppRouter>;
     setting: SettingClientType<AppRouter>;
+    chatParticipant: ChatParticipantClientType<AppRouter>;
+    chatConversation: ChatConversationClientType<AppRouter>;
+    chatMessage: ChatMessageClientType<AppRouter>;
 }

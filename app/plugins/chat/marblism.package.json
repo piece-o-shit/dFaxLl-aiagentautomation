@@ -1,0 +1,7 @@
+{
+  "name": "chat",
+  "version": "1.0.4",
+  "description": "A chat interface using websockets for your users.",
+  "dependencies": [],
+  "pluginDependencies": ["socket"]
+}

@@ -4,27 +4,28 @@ enum UserStatus {
 }
 
 model User {
-    id               String         @id @default(uuid())
+    id               String           @id @default(uuid())
     name             String?
-    email            String?        @unique
-    pictureUrl       String?        @default('https://i.imgur.com/ZdJSK3Y.jpeg')
+    email            String?          @unique
+    pictureUrl       String?          @default('https://i.imgur.com/ZdJSK3Y.jpeg')
     tokenInvitation  String?
 
     stripeCustomerId String?
 
-    status           UserStatus     @default(VERIFIED)
+    status           UserStatus       @default(VERIFIED)
 
     // this is the role of the user for the application
-    globalRole       String         @default('USER')
-    password         String?        @password @omit
-    createdAt        DateTime       @default(now())
-    updatedAt        DateTime       @updatedAt @default(now())
+    globalRole       String           @default('USER')
+    password         String?          @password @omit
+    createdAt        DateTime         @default(now())
+    updatedAt        DateTime         @updatedAt @default(now())
 
-    agents           Agent[]        @relation("user")
-    workflows        Workflow[]     @relation("user")
-    tools            Tool[]         @relation("user")
-    notifications    Notification[] @relation("user")
-    settings         Setting[]      @relation("user")
+    agents           Agent[]          @relation("user")
+    workflows        Workflow[]       @relation("user")
+    tools            Tool[]           @relation("user")
+    notifications    Notification[]   @relation("user")
+    settings         Setting[]        @relation("user")
+    chatParticipants ChatParticipant[] 
 
     @@auth()
     @@allow("all", auth().id == this.id)
@@ -166,3 +167,52 @@ model Setting {
     @@allow("all", true)
 }
 
+model ChatParticipant {
+    id                String           @id @default(uuid())
+    lastReadMessageId String?
+    userId            String
+    user              User             @relation(fields: [userId], references: [id])
+    conversationId    String
+    conversation      ChatConversation @relation(fields: [conversationId], references: [id])
+    messages          ChatMessage[]
+
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt @default(now())
+    @@allow('all', auth().id == userId)
+    @@allow('all', auth().globalRole == 'ADMIN')
+    @@allow('read', conversation.participants?[userId == auth().id])
+    @@allow('create', true)
+}
+
+model ChatConversation {
+    id           String            @id @default(uuid())
+
+    participants ChatParticipant[]
+    messages     ChatMessage[]
+
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @updatedAt @default(now())
+    @@allow("all", auth().id == this.id)
+    @@allow('all', auth().globalRole == 'ADMIN')
+    @@allow('create', true)
+    @@allow('read', participants?[userId == auth().id])
+}
+
+model ChatMessage {
+    id             String           @id @default(uuid())
+    content        String?
+
+    conversationId String
+    conversation   ChatConversation @relation(fields: [conversationId], references: [id])
+
+    participantId  String
+    participant    ChatParticipant  @relation(fields: [participantId], references: [id])
+
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt @default(now())
+    @@allow("all", auth().id == this.id)
+    @@allow('all', auth().globalRole == 'ADMIN')
+    @@allow('all', participant.userId == auth().id)
+    @@allow('create', true)
+    @@allow('read', conversation.participants?[userId == auth().id])
+}
