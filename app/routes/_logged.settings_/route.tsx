@@ -1,7 +1,10 @@
 import { useUserContext } from '@/core/context'
 import { Api } from '@/core/trpc'
 import { PageLayout } from '@/designSystem'
-import { AiProviderConfiguration } from '@/plugins/ai/server/providers/ai.provider'
+import {
+  AiModel,
+  AiProviderConfiguration,
+} from '@/plugins/ai/server/providers/ai.provider.ts'
 import {
   Button,
   Card,
@@ -14,13 +17,14 @@ import {
   Switch,
   Typography,
 } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 const { Title, Text } = Typography
 
 export default function SettingsPage() {
   const { user } = useUserContext()
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
+  const [availableModels, setAvailableModels] = useState<AiModel[]>([])
 
   // Fetch user settings
   const { data: settings, refetch: refetchSettings } =
@@ -38,6 +42,24 @@ export default function SettingsPage() {
   const { mutateAsync: createSetting } = Api.setting.create.useMutation()
   const { mutateAsync: updateTool } = Api.tool.update.useMutation()
   const { mutateAsync: createTool } = Api.tool.create.useMutation()
+  const { mutateAsync: getModels } = Api.ai.getAvailableModels.useMutation()
+
+  // Fetch models when provider/apiKey changes
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const provider = form.getFieldValue('aiProvider')
+        const apiKey = form.getFieldValue('apiKey')
+        if (provider && apiKey) {
+          const models = await getModels({ provider, apiKey })
+          setAvailableModels(models)
+        }
+      } catch (error) {
+        console.error('Failed to fetch models:', error)
+      }
+    }
+    fetchModels()
+  }, [form.getFieldValue('aiProvider'), form.getFieldValue('apiKey')])
 
   const handleSaveSettings = async (values: any) => {
     try {
@@ -82,20 +104,21 @@ export default function SettingsPage() {
         }
       }
 
-      // Handle API keys and provider
-      if (values.openaiKey) {
-        const existingOpenAI = tools?.find(t => t.type === 'openai')
-        if (existingOpenAI) {
+      // Handle API key storage
+      if (values.apiKey) {
+        const provider = values.aiProvider
+        const existingTool = tools?.find(t => t.type === provider)
+        if (existingTool) {
           await updateTool({
-            where: { id: existingOpenAI.id },
-            data: { apiKey: values.openaiKey },
+            where: { id: existingTool.id },
+            data: { apiKey: values.apiKey },
           })
         } else {
           await createTool({
             data: {
-              name: 'OpenAI',
-              type: 'openai',
-              apiKey: values.openaiKey,
+              name: provider.charAt(0).toUpperCase() + provider.slice(1),
+              type: provider,
+              apiKey: values.apiKey,
               userId: user?.id,
             },
           })
@@ -141,10 +164,14 @@ export default function SettingsPage() {
       settings?.find(s => s.name === 'defaultLanguage')?.value || 'en',
     defaultModel:
       settings?.find(s => s.name === 'defaultModel')?.value || 'gpt-3.5-turbo',
-    openaiKey: tools?.find(t => t.type === 'openai')?.apiKey || '',
+    apiKey:
+      tools?.find(t => t.type === form.getFieldValue('aiProvider'))?.apiKey ||
+      '',
     aiProvider:
-      (tools?.find(t => t.type === 'aiProvider')?.configuration as unknown as AiProviderConfiguration)?.provider ||
-      'openai',
+      (
+        tools?.find(t => t.type === 'aiProvider')
+          ?.configuration as unknown as AiProviderConfiguration
+      )?.provider || 'openai',
   }
 
   return (
@@ -210,11 +237,11 @@ export default function SettingsPage() {
                 }
               >
                 <Form.Item
-                  name="openaiKey"
-                  label="OpenAI API Key"
+                  name="apiKey"
+                  label="API Key"
                   extra="Your API key will be encrypted before storage"
                 >
-                  <Input.Password placeholder="sk-..." />
+                  <Input.Password placeholder="Enter your API key..." />
                 </Form.Item>
 
                 <Form.Item name="aiProvider" label="AI Provider">
@@ -248,10 +275,11 @@ export default function SettingsPage() {
                   <Col xs={24} lg={12}>
                     <Form.Item name="defaultModel" label="Default AI Model">
                       <Select>
-                        <Select.Option value="gpt-3.5-turbo">
-                          GPT-3.5 Turbo
-                        </Select.Option>
-                        <Select.Option value="gpt-4">GPT-4</Select.Option>
+                        {availableModels.map(model => (
+                          <Select.Option key={model.id} value={model.id}>
+                            {model.name}
+                          </Select.Option>
+                        ))}
                       </Select>
                     </Form.Item>
                   </Col>

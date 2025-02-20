@@ -8,6 +8,7 @@ import { AiServiceFactory } from './ai.service.factory'
  * @function {({ prompt: string, provider?: 'openai' | 'gemini' | 'anthropic' }) => Promise<{ url: string }>} generateImage - Send the prompt to OpenAI to generate an Image and get back the URL of the image in the answer
  * @function {({ url: string, provider?: 'openai' | 'gemini' | 'anthropic' }) => Promise<{ translation: string }>} audioToText - Send the readStream of an audio file to OpenAI to transcribe it into text and get back the text in the answer
  * @function {({ text: string, provider?: 'openai' | 'gemini' | 'anthropic' } => Promise<{ url: string }>} textToAudio - Send the text to OpenAI to convert it into an mp3 file and get back the url of the audio file
+ * @function {({ provider?: 'openai' | 'gemini' | 'anthropic' }) => Promise<Array<{ id: string, name: string, contextLength: number }>>} getModels - Get the list of available models for a provider
  * @usage `const generateText = Api.ai.generateText.useMutation(); generateText.mutateAsync({ prompt: 'How are you?' }).then(response => response.answer);`
  * @isImportOverriden false
  * @isAlwaysIncluded false
@@ -15,6 +16,18 @@ import { AiServiceFactory } from './ai.service.factory'
  */
 
 export const AiRouter = Trpc.createRouter({
+  getModels: Trpc.procedure
+    .input(
+      z.object({
+        provider: z.enum(['openai', 'gemini', 'anthropic']).default('openai'),
+      }),
+    )
+    .query(async ({ input }) => {
+      const { provider } = input
+      const aiService = AiServiceFactory.create(provider)
+      const models = await aiService.getAvailableModels()
+      return models
+    }),
   generateText: Trpc.procedure
     .input(
       z.object({

@@ -239,4 +239,17 @@ export class OpenaiProvider {
   ) {
     return response.choices[0].message.parsed
   }
+
+  async getAvailableModels(): Promise<AiModel[]> {
+    const models = await this.api.models.list()
+    
+    return models.data.map(model => ({
+      id: model.id,
+      name: model.id,
+      description: null,
+      maxTokens: model.context_length,
+      inputPricePerToken: null,
+      outputPricePerToken: null
+    }))
+  }
 }

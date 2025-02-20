@@ -1,5 +1,6 @@
 import { ReadStream } from 'fs'
 import { ZodType } from 'zod'
+import { AiModel } from './providers/ai.provider'
 import {
   OpenaiGenerateTextOptions,
   OpenaiProvider,
@@ -40,6 +41,10 @@ class Service {
 
   isActive(): boolean {
     return this.openai.isActive()
+  }
+
+  async getAvailableModels(): Promise<AiModel[]> {
+    return this.openai.getAvailableModels()
   }
 }
 

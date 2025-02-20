@@ -7,7 +7,7 @@ import {
 import { ReadStream } from 'fs'
 import { toGeminiSchema } from 'gemini-zod'
 import { z, ZodType } from 'zod'
-import { AiProvider } from '../provider'
+import { AiModel, AiProvider } from '../ai.provider'
 
 export type GeminiGenerateTextOptions = {
   prompt: string
@@ -180,6 +180,23 @@ export class GeminiProvider implements AiProvider {
     }
 
     return JSON.parse(text)
+  }
+
+  async getAvailableModels(): Promise<AiModel[]> {
+    return [
+      {
+        id: GeminiModel.GEMINI_1_5_FLASH,
+        name: 'Gemini 1.5 Flash',
+        description: 'Fast and efficient model for general use',
+        maxTokens: 128000,
+      },
+      {
+        id: GeminiModel.GEMINI_1_5_PRO,
+        name: 'Gemini 1.5 Pro',
+        description: 'Advanced model with higher capabilities',
+        maxTokens: 128000,
+      },
+    ]
   }
 
   private async readStreamToBase64(readStream: ReadStream): Promise<string> {
