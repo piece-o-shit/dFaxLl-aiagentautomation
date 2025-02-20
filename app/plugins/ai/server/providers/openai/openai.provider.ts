@@ -248,7 +248,7 @@ export class OpenaiProvider {
       id: model.id,
       name: model.id,
       description: null,
-      maxTokens: model.context_length,
+      maxTokens: model.maxTokens,
       inputPricePerToken: null,
       outputPricePerToken: null,
     }))

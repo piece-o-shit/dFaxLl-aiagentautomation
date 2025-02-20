@@ -1,3 +1,6 @@
+import { ReadStream } from 'fs'
+import { ZodType } from 'zod'
+
 export interface AiProviderConfiguration {
   provider: string
 }
