@@ -9,7 +9,7 @@ export interface AiModel {
   id: string
   name: string
   description?: string
-  maxTokens?: number
+  maxTokens: number
   inputPricePerToken?: number
   outputPricePerToken?: number
 }
