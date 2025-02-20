@@ -4,6 +4,7 @@ import { zodResponseFormat } from 'openai/helpers/zod'
 import { ParsedChatCompletion } from 'openai/resources/beta/chat/completions'
 import { Stream } from 'openai/streaming.mjs'
 import { z, ZodType } from 'zod'
+import { AiModel } from '../ai.provider'
 import { OpenaiModel } from './openai.type'
 import { OpenaiUsage } from './openai.usage'
 
@@ -242,14 +243,14 @@ export class OpenaiProvider {
 
   async getAvailableModels(): Promise<AiModel[]> {
     const models = await this.api.models.list()
-    
+
     return models.data.map(model => ({
       id: model.id,
       name: model.id,
       description: null,
-      maxTokens: model.context_length,
+      maxTokens: model.maxTokens,
       inputPricePerToken: null,
-      outputPricePerToken: null
+      outputPricePerToken: null,
     }))
   }
 }

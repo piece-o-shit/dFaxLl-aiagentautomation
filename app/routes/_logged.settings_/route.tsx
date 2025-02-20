@@ -4,7 +4,7 @@ import { PageLayout } from '@/designSystem'
 import {
   AiModel,
   AiProviderConfiguration,
-} from '@/plugins/ai/server/providers/ai.provider.ts'
+} from '@/plugins/ai/server/providers/ai.provider'
 import {
   Button,
   Card,
@@ -42,7 +42,7 @@ export default function SettingsPage() {
   const { mutateAsync: createSetting } = Api.setting.create.useMutation()
   const { mutateAsync: updateTool } = Api.tool.update.useMutation()
   const { mutateAsync: createTool } = Api.tool.create.useMutation()
-  const { mutateAsync: getModels } = Api.ai.getAvailableModels.useMutation()
+  const { mutateAsync: getModels } = Api.ai.getModels.useMutation()
 
   // Fetch models when provider/apiKey changes
   useEffect(() => {
