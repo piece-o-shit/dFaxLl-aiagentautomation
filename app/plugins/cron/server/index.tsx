@@ -1,23 +1,9 @@
 import { CronService } from './cron.service'
+import type { CronFunction, CronJobOptions, CronJobStatus, CronScheduleValidationError } from './cron.types'
 
-export namespace CronServer {
-  export const service = CronService
-  export type {
-    CronFunction,
-    CronJobOptions,
-    CronJobStatus,
-    CronScheduleValidationError,
-  }
+export const service = CronService
+export type { CronFunction, CronJobOptions, CronJobStatus, CronScheduleValidationError }
 
-  export const initialize = () => {
-    return service.initialize()
-  }
-
-  export const shutdown = () => {
-    return service.shutdown()
-  }
-
-  export const listJobs = () => {
-    return service.listJobs()
-  }
-}
+export const initialize = () => service.initialize()
+export const shutdown = () => service.shutdown() 
+export const listJobs = () => service.listJobs()
