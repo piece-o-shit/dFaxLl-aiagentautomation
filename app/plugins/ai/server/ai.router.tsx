@@ -22,7 +22,7 @@ export const AiRouter = Trpc.createRouter({
         provider: z.enum(['openai', 'gemini', 'anthropic']).default('openai'),
       }),
     )
-    .query(async ({ input }) => {
+    .mutation(async ({ input }) => {
       const { provider } = input
       const aiService = AiServiceFactory.create(provider)
       const models = await aiService.getAvailableModels()

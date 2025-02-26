@@ -44,7 +44,18 @@ class Service {
   }
 
   async getAvailableModels(): Promise<AiModel[]> {
-    return this.openai.getAvailableModels()
+    try {
+      if (!this.openai.isActive()) {
+        throw new Error('OpenAI provider is not active')
+      }
+      const models = await this.openai.getAvailableModels()
+      if (!models || !Array.isArray(models)) {
+        throw new Error('Invalid models response from provider')
+      }
+      return models
+    } catch (error) {
+      throw new Error(`Failed to fetch AI models: ${error.message}`)
+    }
   }
 }
 
