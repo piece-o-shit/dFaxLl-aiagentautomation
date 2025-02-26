@@ -1,17 +1,34 @@
 import NodeCron from 'node-cron'
 
-export type CronFunction = string | ((now: Date | 'manual' | 'init') => void)
+export type CronFunction = (now: Date | 'manual' | 'init') => void
 
 class Service {
   private runningJobs: Set<string> = new Set()
+  private scheduledTasks: Map<string, NodeCron.ScheduledTask> = new Map()
 
   constructor() {}
 
-  registerJob(schedule: string, cronFunction: CronFunction): void {
+  initialize(): void {
+    // Initialize the service
+    console.log('CronService initialized')
+  }
+
+  shutdown(): void {
+    // Stop all scheduled tasks
+    this.scheduledTasks.forEach(task => task.stop())
+    this.scheduledTasks.clear()
+    this.runningJobs.clear()
+    console.log('CronService shutdown complete')
+  }
+
+  listJobs(): string[] {
+    return Array.from(this.scheduledTasks.keys())
+  }
+
+  registerJob(schedule: string, cronFunction: CronFunction): NodeCron.ScheduledTask {
     // Validate cronFunction type
-    if (typeof cronFunction !== 'string' && typeof cronFunction !== 'function') {
-      console.error('Invalid cronFunction type - must be string or function')
-      throw new Error('Invalid cronFunction type - must be string or function')
+    if (typeof cronFunction !== 'function') {
+      throw new Error('String type cronFunctions are not supported')
     }
 
     const isValidSchedule = NodeCron.validate(schedule)
@@ -34,13 +51,18 @@ class Service {
         const jobId = cronFunction.toString()
         this.runningJobs.add(jobId)
         try {
-          await cronFunction(new Date())
+          if (typeof cronFunction === 'function') {
+            await cronFunction(new Date())
+          } else {
+            throw new Error('String type cronFunctions are not supported')
+          }
         } finally {
           this.runningJobs.delete(jobId)
         }
       }, { name: cronFunction.toString() })
 
       console.log(`Successfully registered job ${cronFunction.toString()}`)
+      this.scheduledTasks.set(cronFunction.toString(), job)
       return job
     } catch (error) {
       console.error(`Failed to schedule job ${cronFunction.toString()}: ${error}`)
