@@ -8,8 +8,8 @@ export interface AiProviderConfiguration {
 export interface AiModel {
   id: string
   name: string
-  description?: string
-  maxTokens: number
+  description?: string | null
+  maxTokens?: number
   inputPricePerToken?: number
   outputPricePerToken?: number
 }

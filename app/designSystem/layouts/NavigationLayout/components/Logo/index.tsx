@@ -24,17 +24,10 @@ export const Logo: React.FC<Props> = ({
         {...props}
         alt="Logo"
         height={height}
-        style={{
-          borderRadius: '5px',
-          cursor: 'pointer',
-          objectFit: 'contain',
-          height: `${height}px`,
-          ...style,
-        }}
         onError={event => {
           const target = event.target as HTMLImageElement
           target.onerror = null
-          target.src = 'https://i.imgur.com/2dcDGIE.png'
+          target.src = 'https://imgur.com/a/d6UwPfs'
         }}
       />
       {isLabel && (
