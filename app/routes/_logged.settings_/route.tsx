@@ -44,14 +44,13 @@ export default function SettingsPage() {
   const { mutateAsync: createTool } = Api.tool.create.useMutation()
   const { mutateAsync: getModels } = Api.ai.getModels.useMutation()
 
-  // Fetch models when provider/apiKey changes
+  // Fetch models when provider changes
   useEffect(() => {
     const fetchModels = async () => {
       try {
         const provider = form.getFieldValue('aiProvider')
-        const apiKey = form.getFieldValue('apiKey')
-        if (provider && apiKey) {
-          const models = await getModels({ provider, apiKey })
+        if (provider) {
+          const models = await getModels({ provider })
           setAvailableModels(models)
         }
       } catch (error) {
@@ -59,7 +58,7 @@ export default function SettingsPage() {
       }
     }
     fetchModels()
-  }, [form.getFieldValue('aiProvider'), form.getFieldValue('apiKey')])
+  }, [form.getFieldValue('aiProvider')])
 
   const handleSaveSettings = async (values: any) => {
     try {
